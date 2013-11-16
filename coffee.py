@@ -48,7 +48,6 @@ def scatter(db):
     data = db.execute('select dts, coffee from raw_log')
     scatter_data = [[[0,0,0] for i in range(12)] for j in range(24)]
     for row in data:
-        print row['dts'], row['coffee']
         dt = datetime.datetime.strptime(row['dts'], '%Y-%m-%d %H:%M:%S')
         scatter_data[dt.hour][dt.minute/5][row['coffee']] += 1
 
