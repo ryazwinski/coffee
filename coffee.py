@@ -22,6 +22,9 @@ def estimate_complete(dts):
 
 @app.route('/brew/:type')
 def brew(type, db):
+    if bottle.request.headers.environ.get('REMOTE_ADDR') != '127.0.0.1':
+        return "Can only start a brew from the monitor host - sorry."
+
     row = db.execute('select dts, coffee from raw_log order by dts desc').fetchone()
     now = datetime.datetime.utcnow()
 
@@ -55,6 +58,12 @@ def scatter(db):
 def favourites(db):
     data = db.execute('select coffee, count(coffee) from raw_log group by coffee;')
     ret = [(row['coffee'], row['count(coffee)']) for row in data]
+    return str(ret)
+
+@app.route('/coffees')
+def coffees(db):
+    data = db.execute('select id, name from coffees')
+    ret = [(row['id'], row['name']) for row in data]
     return str(ret)
 
 app.run(host='localhost', port=8080, debug=True)
