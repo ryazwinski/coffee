@@ -8,6 +8,15 @@ app = bottle.Bottle()
 plugin = sqlite.Plugin(dbfile='/Users/rick/coffee/coffee.db')
 app.install(plugin)
 
+def tweet(msg):
+    import twitter
+    from twitter_keys import *
+
+    my_auth = twitter.OAuth(TOKEN,TOKEN_KEY,CON_SEC,CON_SEC_KEY)
+    twit = twitter.Twitter(auth=my_auth)
+
+    twit.statuses.update(status=msg)
+
 def json_return(status_code, msg):
     import json
     from bottle import response
@@ -49,7 +58,9 @@ def brew(type, db):
                 return json_return(200, "brew already in progress. Estimated completion: %s" % estimate_complete(dt))
 
     db.execute('insert into raw_log (dts, coffee) values (CURRENT_TIMESTAMP, ?)', type)
-    return json_return(200, "brew started. Estimated completion: %s" % estimate_complete(now))
+    ret_str = "brew started. Estimated completion: %s" % estimate_complete(now)
+    tweet(ret_str)
+    return json_return(200, ret_str)
 
 @app.route('/scatter')
 def scatter(db):
