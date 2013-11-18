@@ -11,7 +11,7 @@ app.install(plugin)
 def tweet(msg):
     try:
         import twitter
-        from twitter_keys import *
+        from twitter_keys import TOKEN, TOKEN_KEY, CON_SEC, CON_SEC_KEY
 
         my_auth = twitter.OAuth(TOKEN,TOKEN_KEY,CON_SEC,CON_SEC_KEY)
         twit = twitter.Twitter(auth=my_auth)
@@ -71,10 +71,10 @@ def brew(type, db):
 def scatter(db):
     import datetime
     data = db.execute('select dts, coffee from raw_log')
-    scatter_data = [[[0,0,0] for i in range(12)] for j in range(24)]
+    scatter_data = {k: [[0 for i in range(12)] for j in range(24)] for k in range(3)}
     for row in data:
         dt = datetime.datetime.strptime(row['dts'], '%Y-%m-%d %H:%M:%S')
-        scatter_data[dt.hour][dt.minute/5][row['coffee']] += 1
+        scatter_data[row['coffee']][dt.hour][dt.minute/5] += 1
 
     return json_return(200, scatter_data)
 
