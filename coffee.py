@@ -90,4 +90,4 @@ def coffees(db):
     ret = [(row['id'], row['name']) for row in data]
     return json_return(200, str(ret))
 
-app.run(host='localhost', port=8080, debug=True)
+app.run(host='0.0.0.0', port=8080, debug=True)
