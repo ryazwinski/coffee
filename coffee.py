@@ -49,7 +49,7 @@ def brew(type, db):
         return json_return(403, "Can only start a brew from the monitor host - sorry.")
 
     row = db.execute('select dts, coffee from raw_log order by dts desc').fetchone()
-    now = datetime.datetime.utcnow()
+    now = datetime.datetime.now()
 
     if row:
         dt = datetime.datetime.strptime(row['dts'], '%Y-%m-%d %H:%M:%S')
@@ -62,7 +62,7 @@ def brew(type, db):
             else:
                 return json_return(200, "brew already in progress. Estimated completion: %s" % estimate_complete(dt))
 
-    db.execute('insert into raw_log (dts, coffee) values (CURRENT_TIMESTAMP, ?)', type)
+    db.execute('insert into raw_log (coffee) values (?)', type)
     ret_str = "brew started. Estimated completion: %s" % estimate_complete(now)
     tweet(ret_str)
     return json_return(200, ret_str)

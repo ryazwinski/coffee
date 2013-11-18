@@ -2,7 +2,7 @@ PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION;
 CREATE TABLE raw_log
 (
-    dts DATETIME PRIMARY KEY NOT NULL DEFAULT timestamp,
+    dts DATETIME PRIMARY KEY NOT NULL DEFAULT (datetime('now','localtime')),
     coffee int NOT NULL
 );
 CREATE TABLE coffees
