@@ -9,13 +9,18 @@ plugin = sqlite.Plugin(dbfile='/Users/rick/coffee/coffee.db')
 app.install(plugin)
 
 def tweet(msg):
-    import twitter
-    from twitter_keys import *
+    try:
+        import twitter
+        from twitter_keys import *
 
-    my_auth = twitter.OAuth(TOKEN,TOKEN_KEY,CON_SEC,CON_SEC_KEY)
-    twit = twitter.Twitter(auth=my_auth)
+        my_auth = twitter.OAuth(TOKEN,TOKEN_KEY,CON_SEC,CON_SEC_KEY)
+        twit = twitter.Twitter(auth=my_auth)
 
-    twit.statuses.update(status=msg)
+        twit.statuses.update(status=msg)
+    except Exception:
+        # if we can't tweet (likely because of missing keys)
+        # just ignore it and move on - not critical
+        pass
 
 def json_return(status_code, msg):
     import json
