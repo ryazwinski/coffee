@@ -81,13 +81,15 @@ def scatter(db):
     coffees = {row['id']: row['name'] for row in data}
     num_coffees = len(coffees)
 
-    data = db.execute('select dts, coffee from raw_log')
     # [['time', 'house count', 'sumatra count'],
     #  ['0:00', 0, 0],
     #  ['0:05', 1, 0],...]
 
     scatter_data = {k: [[0 for i in range(12)] for j in range(24)] for k in range(num_coffees)}
+    data = db.execute('select dts, coffee from raw_log')
+
     for row in data:
+        print row['dts']
         dt = datetime.datetime.strptime(row['dts'], '%Y-%m-%d %H:%M:%S')
         scatter_data[row['coffee']][dt.hour][dt.minute/5] += 1
 
@@ -103,9 +105,12 @@ def scatter(db):
             line = [ 60*hours+minutes*5 ]
             found = False
             for coffee in range(num_coffees):
-                line.append(scatter_data[coffee][hours][minutes])
                 if scatter_data[coffee][hours][minutes] > 0:
                     found = True
+                    line.append(scatter_data[coffee][hours][minutes])
+                else:
+                    line.append(0)
+
             if found:
                 return_data.append(line)
 
