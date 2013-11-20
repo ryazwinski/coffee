@@ -14,8 +14,9 @@
           dataType:"json",
           async: false
           }).responseText;
-        var newData = JSON.parse(jsonData)
-        $('#printHere').html(newData);
+
+        var newData = eval(JSON.parse(jsonData));
+
         var data = google.visualization.arrayToDataTable(newData);
 
         var options = {
@@ -24,15 +25,32 @@
 
         var chart = new google.visualization.PieChart(document.getElementById('piechart'));
         chart.draw(data, options);
+
+        var options = {
+          title: 'Coffee by Brew Time',
+          hAxis: {title: 'Time'},
+          vAxis: {title: 'Count'},
+          legend: 'none'
+        };
+        var jsonData = $.ajax({
+          url: "scatter",
+          dataType:"json",
+          async: false
+          }).responseText;
+
+        var newData = eval(JSON.parse(jsonData));
+
+        var data = google.visualization.arrayToDataTable(newData);
+        var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
       }
     </script>
 </head>
 <body>
 <H1>Coffee Machine Stats</H1>
 
-<span id="printHere"></span>
-
 <div id="piechart" style="width: 900px; height: 500px;"></div>
+<div id="chart_div" style="width: 900px; height: 500px;"></div>
 
 </body>
 </html>
