@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Coffee Machine</title>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var jsonData = $.ajax({
+          url: "favourites",
+          dataType:"json",
+          async: false
+          }).responseText;
+        var data =  google.visualization.arrayToDataTable(jsonData);
+
+        var options = {
+          title: 'Brew Favourites'
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+        chart.draw(data, options);
+      }
+    </script>
+</head>
+<body>
+<H1>Coffee Machine Stats</H1>
+
+<div id="piechart" style="width: 900px; height: 500px;"></div>
+
+</body>
+</html>

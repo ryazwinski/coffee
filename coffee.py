@@ -76,18 +76,51 @@ def brew(coffee_type, db):
 @app.route('/scatter')
 def scatter(db):
     import datetime
+
+    data = db.execute('select id, name from coffees')
+    coffees = {row['id']: row['name'] for row in data}
+    num_coffees = len(coffees)
+
     data = db.execute('select dts, coffee from raw_log')
-    scatter_data = {k: [[0 for i in range(12)] for j in range(24)] for k in range(3)}
+    # [['time', 'house count', 'sumatra count'],
+    #  ['0:00', 0, 0],
+    #  ['0:05', 1, 0],...]
+
+    scatter_data = {k: [[0 for i in range(12)] for j in range(24)] for k in range(num_coffees)}
     for row in data:
         dt = datetime.datetime.strptime(row['dts'], '%Y-%m-%d %H:%M:%S')
         scatter_data[row['coffee']][dt.hour][dt.minute/5] += 1
 
-    return json_return(200, scatter_data)
+    return_data = []
+    line = ['time']
+    for c in coffees.keys():
+        line.append('%s count' % coffees[c])
+    return_data.append(line)
+
+    for hours in range(24):
+        for minutes in range(12):
+            line = [ '%d:%02d' % (hours, minutes*5)]
+            for coffee in range(num_coffees):
+                line.append(scatter_data[coffee][hours][minutes])
+            return_data.append(line)
+
+    return json_return(200, return_data)
 
 @app.route('/favourites')
 def favourites(db):
+    # [['coffee', 'count'],
+    #  ['unknown', 10],
+    #  ['house', 20],..]
+
+    data = db.execute('select id, name from coffees')
+    coffees = {row['id']: row['name'] for row in data}
+
     data = db.execute('select coffee, count(coffee) from raw_log group by coffee;')
-    ret = [(row['coffee'], row['count(coffee)']) for row in data]
+    ret = [[row['coffee'], row['count(coffee)']] for row in data]
+    for row in ret:
+        row[0] = coffees[row[0]]
+
+    ret.insert(0,['coffee', 'count'])
     return json_return(200, str(ret))
 
 @app.route('/coffees')
@@ -95,5 +128,11 @@ def coffees(db):
     data = db.execute('select id, name from coffees')
     ret = [(row['id'], row['name']) for row in data]
     return json_return(200, str(ret))
+
+@app.route('/')
+@app.route('/<unknown>')
+def index():
+    import os
+    return bottle.static_file('index.html', root=os.path.dirname(__file__))
 
 app.run(host='0.0.0.0', port=8080, debug=True)
