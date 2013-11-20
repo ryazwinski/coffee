@@ -118,7 +118,7 @@ def favourites(db):
     data = db.execute('select coffee, count(coffee) from raw_log group by coffee;')
     ret = [[row['coffee'], row['count(coffee)']] for row in data]
     for row in ret:
-        row[0] = coffees[row[0]]
+        row[0] = str(coffees[row[0]])
 
     ret.insert(0,['coffee', 'count'])
     return json_return(200, str(ret))

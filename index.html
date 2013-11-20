@@ -14,7 +14,9 @@
           dataType:"json",
           async: false
           }).responseText;
-        var data =  google.visualization.arrayToDataTable(jsonData);
+        var newData = JSON.parse(jsonData)
+        $('#printHere').html(newData);
+        var data = google.visualization.arrayToDataTable(newData);
 
         var options = {
           title: 'Brew Favourites'
@@ -27,6 +29,8 @@
 </head>
 <body>
 <H1>Coffee Machine Stats</H1>
+
+<span id="printHere"></span>
 
 <div id="piechart" style="width: 900px; height: 500px;"></div>
 
