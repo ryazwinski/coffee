@@ -5,7 +5,7 @@ from bottle.ext import sqlite
 import datetime
 
 app = bottle.Bottle()
-plugin = sqlite.Plugin(dbfile='/Users/rick/coffee/coffee.db')
+plugin = sqlite.Plugin(dbfile=os.path.join(os.path.dirname(__file__),'coffee.db'))
 app.install(plugin)
 
 def tweet(msg):
