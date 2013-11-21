@@ -10,6 +10,13 @@
       google.setOnLoadCallback(drawChart);
       function drawChart() {
         var jsonData = $.ajax({
+          url: "last",
+          dataType:"json",
+          async: false
+          }).responseText;
+        $('#printHere').html(eval(jsonData));
+
+        var jsonData = $.ajax({
           url: "favourites",
           dataType:"json",
           async: false
@@ -28,7 +35,8 @@
 
         var options = {
           title: 'Coffee by Brew Time',
-          hAxis: {title: 'Time'},
+          hAxis: {title: 'Time', minValue: 0, maxValue: 1440, ticks: [0, 60, 120, 180, 240, 300, 360, 420, 480,
+                    540, 600, 660, 720, 780, 840, 900, 960, 1020, 1080, 1140, 1200, 1260, 1320, 1380, 1440] },
           vAxis: {title: 'Count'},
           legend: 'none'
         };
@@ -49,6 +57,7 @@
 <body>
 <H1>Coffee Machine Stats</H1>
 
+<P>Last brew <span id="printHere"></span></P>
 <span id="piechart" style="width: 45%; height: 500px;float: left;"></span>
 <span id="chart_div" style="width: 45%; height: 500px;float: right;"></span>
 

@@ -33,9 +33,9 @@ def json_return(status_code, msg):
 
 @app.route('/last')
 def last(db):
-    row = db.execute('select dts, coffee from raw_log order by dts desc').fetchone()
+    row = db.execute('select dts, name from raw_log as r join coffees as c on c.id=r.coffee order by dts desc').fetchone()
     if row:
-        return json_return(200, "%s: %s" % (row['dts'], row['coffee']))
+        return json_return(200, "%s %s" % (row['dts'], row['name']))
 
     return json_return(404, "No rows")
 
@@ -89,7 +89,6 @@ def scatter(db):
     data = db.execute('select dts, coffee from raw_log')
 
     for row in data:
-        print row['dts']
         dt = datetime.datetime.strptime(row['dts'], '%Y-%m-%d %H:%M:%S')
         scatter_data[row['coffee']][dt.hour][dt.minute/5] += 1
 
