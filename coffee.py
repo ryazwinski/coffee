@@ -140,7 +140,7 @@ def coffees(db):
 
 @app.route('/')
 @app.route('/<unknown>')
-def index():
+def index(unknown='ignored'):
     import os
     return bottle.static_file('index.html', root=os.path.dirname(__file__))
 
