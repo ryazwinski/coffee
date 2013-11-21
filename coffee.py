@@ -3,6 +3,7 @@ __author__ = 'rick'
 import bottle
 from bottle.ext import sqlite
 import datetime
+import os
 
 app = bottle.Bottle()
 plugin = sqlite.Plugin(dbfile=os.path.join(os.path.dirname(__file__),'coffee.db'))
