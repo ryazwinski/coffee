@@ -35,8 +35,7 @@
 
         var options = {
           title: 'Coffee by Brew Time',
-          hAxis: {title: 'Time', minValue: 0, maxValue: 1440, ticks: [0, 60, 120, 180, 240, 300, 360, 420, 480,
-                    540, 600, 660, 720, 780, 840, 900, 960, 1020, 1080, 1140, 1200, 1260, 1320, 1380, 1440] },
+          hAxis: {title: 'Time' },
           vAxis: {title: 'Count'},
           legend: 'none'
         };
@@ -45,8 +44,11 @@
           dataType:"json",
           async: false
           }).responseText;
+        console.log(typeof(jsonData));
+        console.log(jsonData);
 
         var newData = eval(JSON.parse(jsonData));
+        console.log(newData);
 
         var data = google.visualization.arrayToDataTable(newData);
         var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));

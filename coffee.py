@@ -102,7 +102,7 @@ def scatter(db):
     for hours in range(24):
         for minutes in range(12):
             #line = [ '%d:%02d' % (hours, minutes*5)]
-            line = [ 60*hours+minutes*5 ]
+            line = [ [ hours, minutes*5, 0, 0] ]
             found = False
             for coffee in range(num_coffees):
                 if scatter_data[coffee][hours][minutes] > 0:
