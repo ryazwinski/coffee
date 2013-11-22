@@ -6,6 +6,22 @@
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
     <script type="text/javascript">
+      document.onclick = function() {
+          $.ajax({
+              url: "brew/1",
+              dataType: "json",
+              async: false
+          })
+          location.reload()
+      }
+      document.oncontextmenu = function() {
+          $.ajax({
+              url: "brew/2",
+              dataType: "json",
+              async: false
+          })
+          location.reload()
+      }
       google.load("visualization", "1", {packages:["corechart"]});
       google.setOnLoadCallback(drawChart);
       function drawChart() {
