@@ -94,9 +94,8 @@ def scatter(db):
         scatter_data[row['coffee']][dt.hour][dt.minute/5] += 1
 
     return_data = []
-    line = ['time']
-    for c in coffees.keys():
-        line.append('%s count' % coffees[c])
+
+    line = ['time'] + [ coffees[c] for c in coffees.keys()]
     return_data.append(line)
 
     for hours in range(24):
