@@ -11,13 +11,12 @@
 
 # Author: Rick Yazwinski <rick@tucows.com>
 
-# PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="Start the coffee server"
 NAME=coffee.sh
 DAEMON=/home/pi/coffee/$NAME
 DAEMON_ARGS=
-PIDFILE=/var/run/$NAME.pid
+PIDFILE=/var/run/coffee.pid
 SCRIPTNAME=/etc/init.d/coffee
 
 # Exit if the package is not installed
@@ -27,22 +26,18 @@ SCRIPTNAME=/etc/init.d/coffee
 
 case "$1" in
   start)
-	sh $DAEMON
-	;;
+    sh $DAEMON
+    ;;
   stop)
-	PID=`pidof 'python /home/pi/coffee/coffee.py'`
-	if [ "$PID" != "" ] ; then
-		kill ${PID}
-	fi
-	;;
+    kill `cat $PIDFILE`
+    ;;
   status)
-	status_of_proc "python /home/pi/coffee/coffee.py" "coffee" && exit 0 || exit $?
-	PID=`pidof python /home/pi/coffee/coffee.py` && exit 0 || exit $?
-	;;
+    status_of_proc "python /home/pi/coffee/coffee.py" "coffee" && exit 0 || exit $?
+    ;;
   *)
-	echo "Usage: $SCRIPTNAME {start|stop}" >&2
-	exit 3
-	;;
+    echo "Usage: $SCRIPTNAME {start|stop}" >&2
+    exit 3
+    ;;
 esac
 
 :
