@@ -144,4 +144,4 @@ def index(unknown='ignored'):
     import os
     return bottle.static_file('index.html', root=os.path.dirname(__file__))
 
-app.run(host='0.0.0.0', port=8080, debug=True)
+app.run(server='paste', host='0.0.0.0', port=8080, debug=True)

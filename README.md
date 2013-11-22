@@ -7,3 +7,5 @@ Dependencies
 ------------
 - bottle (bottlepy.org)
 - bottle-sqlite
+- twitter
+- paste
