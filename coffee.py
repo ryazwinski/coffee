@@ -5,6 +5,8 @@ from bottle.ext import sqlite
 import datetime
 import os
 
+BREW_TIME=480 # seconds
+
 app = bottle.Bottle()
 plugin = sqlite.Plugin(dbfile=os.path.join(os.path.dirname(__file__),'coffee.db'))
 app.install(plugin)
@@ -41,7 +43,7 @@ def last(db):
     return json_return(404, "No rows")
 
 def estimate_complete(dts):
-    td = datetime.timedelta(seconds=300)
+    td = datetime.timedelta(seconds=BREW_TIME)
     return dts+td
 
 @app.route('/brew/:coffee_type')
@@ -62,7 +64,7 @@ def brew(coffee_type, db):
         dt = datetime.datetime.strptime(row['dts'], '%Y-%m-%d %H:%M:%S')
         delta = now-dt
 
-        if delta.seconds < 300:
+        if delta.seconds < BREW_TIME:
             if coffee_type != str(row['coffee']):
                 db.execute('update raw_log set coffee=%s where dts="%s"' % (coffee_type, row['dts']))
                 return json_return(200, "brew type changed. Estimated completion: %s" % estimate_complete(dt))
