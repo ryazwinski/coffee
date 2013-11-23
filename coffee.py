@@ -51,10 +51,10 @@ def brew(coffee_type, db):
     if bottle.request.headers.environ.get('REMOTE_ADDR') != '127.0.0.1':
         return json_return(403, "Can only start a brew from the monitor host - sorry.")
 
-    data = db.execute('select id from coffees')
-    coffee_types = [ row['id'] for row in data ]
+    data = db.execute('select id, name from coffees')
+    coffees = { row['id'] : row['name'] for row in data }
 
-    if int(coffee_type) not in coffee_types:
+    if int(coffee_type) not in coffees.keys():
         return json_return(403, "Invalid coffee type.")
 
     row = db.execute('select dts, coffee from raw_log order by dts desc').fetchone()
@@ -72,7 +72,7 @@ def brew(coffee_type, db):
                 return json_return(200, "brew already in progress. Estimated completion: %s" % estimate_complete(dt))
 
     db.execute('insert into raw_log (coffee) values (?)', coffee_type)
-    ret_str = "brew started. Estimated completion: %s" % estimate_complete(now)
+    ret_str = "Brew started: %s. Estimated completion: %s" % (coffees[int(coffee_type)], estimate_complete(now))
     tweet(ret_str)
     return json_return(200, ret_str)
 
