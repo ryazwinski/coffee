@@ -60,7 +60,12 @@ def brew(coffee_type, db):
 
     db.execute('insert into raw_log (coffee) values (?)', coffee_type)
     ret_str = "Brew started: %s. Estimated completion: %s" % (coffees[int(coffee_type)], estimate_complete(now))
+
     tweet(ret_str)
+
+    os.system("(sleep %d ; %s/tweet.py pot of %s is ready for you.)&" %
+              (BREW_TIME, os.path.dirname(__file__), coffees[int(coffee_type)]))
+
     return json_return(200, ret_str)
 
 @app.route('/scatter')
