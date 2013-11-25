@@ -3,3 +3,5 @@ coffee.db
 twitter_keys.py
 sqlitejdbc-v056.jar
 zentus-sqlite-license.txt
+*.pyc
+*.hold
