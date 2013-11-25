@@ -4,26 +4,13 @@ import bottle
 from bottle.ext import sqlite
 import datetime
 import os
+from twitterhelp import tweet
 
 BREW_TIME=480 # seconds
 
 app = bottle.Bottle()
 plugin = sqlite.Plugin(dbfile=os.path.join(os.path.dirname(__file__),'coffee.db'))
 app.install(plugin)
-
-def tweet(msg):
-    try:
-        import twitter
-        from twitter_keys import TOKEN, TOKEN_KEY, CON_SEC, CON_SEC_KEY
-
-        my_auth = twitter.OAuth(TOKEN,TOKEN_KEY,CON_SEC,CON_SEC_KEY)
-        twit = twitter.Twitter(auth=my_auth)
-
-        twit.statuses.update(status=msg)
-    except Exception:
-        # if we can't tweet (likely because of missing keys)
-        # just ignore it and move on - not critical
-        pass
 
 def json_return(status_code, msg):
     import json
