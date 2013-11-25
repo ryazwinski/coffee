@@ -134,6 +134,39 @@ def favourites(db):
     ret.insert(0,['coffee', 'count'])
     return json_return(200, str(ret))
 
+@app.route('/dow')
+def dow(db):
+    data = db.execute('''
+        select day_of_week, count(day_of_week) from (
+            select strftime("%w", date(distinct_date)) as day_of_week from (
+                        select distinct strftime("%Y-%m-%d", dts) as distinct_date from raw_log
+                            )
+            )
+        group by day_of_week;'''
+    );
+    count_of_weekdays_logged = { int(row['day_of_week']): int(row['count(day_of_week)']) for row in data }
+
+    data = db.execute('''
+        select day_of_week, count(day_of_week) from (
+            select strftime("%w", dts) as day_of_week from raw_log
+        ) group by day_of_week;'''
+    );
+    raw_brews_by_weekday = { int(row['day_of_week']): int(row['count(day_of_week)']) for row in data }
+
+    average_brews_by_weekday = [ 0 for x in range(7) ]
+    for day in raw_brews_by_weekday.keys():
+        average_brews_by_weekday[day] = raw_brews_by_weekday[day]/count_of_weekdays_logged[day]
+
+    days = ['Sun','Mon','Tues','Wed','Thurs','Fri','Sat']
+    return_array = [['Day', 'Count']]
+    for day in range(7):
+        return_array.append([days[day], average_brews_by_weekday[day]])
+
+    return json_return(200, str(return_array))
+
+
+
+
 @app.route('/coffees')
 def coffees(db):
     data = db.execute('select id, name from coffees')

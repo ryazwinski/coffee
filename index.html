@@ -37,15 +37,11 @@
           dataType:"json",
           async: false
           }).responseText;
-
         var newData = eval(JSON.parse(jsonData));
-
         var data = google.visualization.arrayToDataTable(newData);
-
         var options = {
           title: 'Brew Favourites'
         };
-
         var chart = new google.visualization.PieChart(document.getElementById('piechart'));
         chart.draw(data, options);
 
@@ -59,14 +55,23 @@
           dataType:"json",
           async: false
           }).responseText;
-        console.log(typeof(jsonData));
-        console.log(jsonData);
-
         var newData = eval(JSON.parse(jsonData));
-        console.log(newData);
-
         var data = google.visualization.arrayToDataTable(newData);
         var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+
+        var jsonData = $.ajax({
+          url: "dow",
+          dataType:"json",
+          async: false
+          }).responseText;
+        var newData = eval(JSON.parse(jsonData));
+        var data = google.visualization.arrayToDataTable(newData);
+        var options = {
+          title: 'Average by Day of Week',
+          legend: {position:'none'}
+        };
+        var chart = new google.visualization.BarChart(document.getElementById('average'));
         chart.draw(data, options);
       }
     </script>
@@ -74,12 +79,13 @@
 <body>
 <center>
 <H1>Coffee Machine Stats</H1>
+<P>Instructions: Use the mouse buttons to log a brew of house or sumatra.</P>
 
 <P>Last brew <span id="printHere"></span></P>
-<span id="piechart" style="width: 50%; height: 500px;float: left;"></span>
-<span id="chart_div" style="width: 50%; height: 500px;float: right;"></span>
-
-<P>Instructions: Use the mouse buttons to log a brew of house or sumatra.</P>
+<span id="piechart" style="width: 50%; height: 400px;float: left;"></span>
+<span id="chart_div" style="width: 50%; height: 400px;float: right;"></span>
+<br>
+<span id="average" style="width: 50%; height: 400px;float: left;"></span>
 </center>
 <span style="float:right; font-size: 8pt">Fork me at: http://gitub.com/ryazwinski/coffee</span>
 </body>
