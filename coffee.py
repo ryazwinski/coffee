@@ -7,7 +7,7 @@ import os
 from twitterhelp import tweet
 
 BREW_TIME = 480  # seconds
-MINUTE_BIN_SIZE = 5  # number of minutes per scatter chart bin
+MINUTE_BIN_SIZE = 15  # number of minutes per scatter chart bin
 
 app = bottle.Bottle()
 plugin = sqlite.Plugin(dbfile=os.path.join(os.path.dirname(__file__),'coffee.db'))
