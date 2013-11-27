@@ -6,7 +6,8 @@ import datetime
 import os
 from twitterhelp import tweet
 
-BREW_TIME=480 # seconds
+BREW_TIME = 480  # seconds
+MINUTE_BIN_SIZE = 5  # number of minutes per scatter chart bin
 
 app = bottle.Bottle()
 plugin = sqlite.Plugin(dbfile=os.path.join(os.path.dirname(__file__),'coffee.db'))
@@ -80,12 +81,12 @@ def scatter(db):
     #  ['0:00', 0, 0],
     #  ['0:05', 1, 0],...]
 
-    scatter_data = {k: [[0 for i in range(12)] for j in range(24)] for k in range(num_coffees)}
+    scatter_data = {k: [[0 for i in range(60/MINUTE_BIN_SIZE)] for j in range(24)] for k in range(num_coffees)}
     data = db.execute('select dts, coffee from raw_log')
 
     for row in data:
         dt = datetime.datetime.strptime(row['dts'], '%Y-%m-%d %H:%M:%S')
-        scatter_data[row['coffee']][dt.hour][dt.minute/5] += 1
+        scatter_data[row['coffee']][dt.hour][dt.minute/MINUTE_BIN_SIZE] += 1
 
     return_data = []
 
@@ -93,9 +94,9 @@ def scatter(db):
     return_data.append(line)
 
     for hours in range(24):
-        for minutes in range(12):
+        for minutes in range(60/MINUTE_BIN_SIZE):
             #line = [ '%d:%02d' % (hours, minutes*5)]
-            line = [ [ hours, minutes*5, 0, 0] ]
+            line = [ [ hours, minutes*MINUTE_BIN_SIZE, 0, 0] ]
             found = False
             for coffee in range(num_coffees):
                 if scatter_data[coffee][hours][minutes] > 0:
