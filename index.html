@@ -13,7 +13,7 @@
               async: false
           });
           $('#status').html('Thank you for clicking... Page will now reload.');
-          location.reload();
+          setTimeout(function() { location.reload(); }, 5000);
       }
       document.oncontextmenu = function() {
           $.ajax({
@@ -22,7 +22,7 @@
               async: false
           });
           $('#status').html('Thank you for clicking... Page will now reload.');
-          location.reload();
+          setTimeout(function() { location.reload(); }, 5000);
       }
       google.load("visualization", "1", {packages:["corechart"]});
       google.setOnLoadCallback(drawChart);
