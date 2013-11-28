@@ -4,7 +4,7 @@ import bottle
 from bottle.ext import sqlite
 import datetime
 import os
-from twitterhelp import tweet
+from utils import tweet, publish
 
 BREW_TIME = 480  # seconds
 MINUTE_BIN_SIZE = 15  # number of minutes per scatter chart bin
@@ -60,9 +60,11 @@ def brew(coffee_type, db):
                 return json_return(200, "brew already in progress. Estimated completion: %s" % estimate_complete(dt))
 
     db.execute('insert into raw_log (coffee) values (?)', coffee_type)
-    ret_str = "Brew started: %s. Estimated completion: %s" % (coffees[int(coffee_type)], estimate_complete(now))
+    eta = estimate_complete(now)
+    ret_str = "Brew started: %s. Estimated completion: %s" % (coffees[int(coffee_type)], eta)
 
     tweet(ret_str)
+    publish(str({'human': ret_str, 'coffee': coffees[int(coffee_type)], 'start': now, 'estimate': eta}))
 
     os.system("(sleep %d ; %s/tweet.sh pot of %s is ready for you.)&" %
               (BREW_TIME, os.path.dirname(__file__), coffees[int(coffee_type)]))
