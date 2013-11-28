@@ -6,4 +6,4 @@ BINDIR=${HOME}/coffee
 
 cd $BINDIR
 . $VENVDIR/bin/activate
-python $BINDIR/tweet.py $* 
+python $BINDIR/followup.py $*

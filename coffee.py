@@ -5,9 +5,7 @@ from bottle.ext import sqlite
 import datetime
 import os
 from utils import tweet, publish
-
-BREW_TIME = 480  # seconds
-MINUTE_BIN_SIZE = 15  # number of minutes per scatter chart bin
+from settings import *
 
 app = bottle.Bottle()
 plugin = sqlite.Plugin(dbfile=os.path.join(os.path.dirname(__file__),'coffee.db'))
@@ -66,7 +64,7 @@ def brew(coffee_type, db):
     tweet(ret_str)
     publish(str({'human': ret_str, 'coffee': coffees[int(coffee_type)], 'start': now, 'estimate': eta}))
 
-    os.system("(sleep %d ; %s/tweet.sh pot of %s is ready for you.)&" %
+    os.system("(sleep %d ; %s/followup.sh pot of %s is ready for you.)&" %
               (BREW_TIME, os.path.dirname(__file__), coffees[int(coffee_type)]))
 
     return json_return(200, ret_str)
