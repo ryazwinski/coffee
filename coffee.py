@@ -62,10 +62,10 @@ def brew(coffee_type, db):
     ret_str = "Brew started: %s. Estimated completion: %s" % (coffees[int(coffee_type)], eta)
 
     tweet(ret_str)
-    publish(str({'human': ret_str, 'coffee': coffees[int(coffee_type)], 'start': now, 'estimate': eta}))
+    publish(str({'human': ret_str, 'type': 'start', 'coffee': coffees[int(coffee_type)], 'start': now, 'estimate': eta}))
 
-    os.system("(sleep %d ; %s/followup.sh pot of %s is ready for you.)&" %
-              (BREW_TIME, os.path.dirname(__file__), coffees[int(coffee_type)]))
+    os.system("(%s/followup.sh %d %s)&" %
+              (os.path.dirname(__file__), BREW_TIME, coffees[int(coffee_type)]))
 
     return json_return(200, ret_str)
 
