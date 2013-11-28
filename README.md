@@ -7,5 +7,6 @@ Dependencies
 ------------
 - bottle (bottlepy.org)
 - bottle-sqlite
-- twitter
 - paste
+- twitter (if you want to tweet)
+- redis (if you want to publish events)
