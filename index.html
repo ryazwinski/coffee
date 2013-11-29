@@ -28,11 +28,18 @@
       google.setOnLoadCallback(drawChart);
       function drawChart() {
         var jsonData = $.ajax({
-          url: "last",
+          url: "last/3",
           dataType:"json",
           async: false
           }).responseText;
-        $('#lastbrew').html(eval(jsonData));
+        var arr=eval(jsonData);
+        console.log(arr)
+        var f = 1;
+        for (var i in arr) {
+            var str = arr[i];
+            f++;
+            $('#lastbrew').append("<div style='font-size: " + (23-(3*f)) + "pt'>" + str + "</div>");
+        }
 
         var jsonData = $.ajax({
           url: "favourites",
@@ -90,10 +97,10 @@
 <br>
 <span id="average" style="width: 45%; height: 350px;float: left; padding-left: 5%"></span>
 </center>
-<span style="padding-top: 150px; padding-right: 50px;float: right; text-align: left; font-size: 20pt; width: 45%">
-    <P style="text-align: center">Last brew <span id="lastbrew"></span>
+<span style="padding-top: 80px; padding-right: 50px;float: right; text-align: left; font-size: 20pt; width: 45%">
+    <P style="text-align: center">Last brews <span id="lastbrew"></span>
     <P style="text-align: center"><span id="status">&nbsp</span>
-    <P style="padding-top: 40px;font-size: 8pt; text-align: right">
+    <P style="padding-top: 30px;font-size: 8pt; text-align: right">
     Subscribe to events at: redis://javamon.int.tucows.com:6379/coffee-event</P>
     <P style="font-size: 8pt; text-align: right">Fork me at: http://github.com/ryazwinski/coffee</P>
 </span>
