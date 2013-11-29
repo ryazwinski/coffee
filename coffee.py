@@ -20,11 +20,33 @@ def json_return(status_code, msg):
 
     return json.dumps(msg)
 
+def gen_last(count, db):
+    data = db.execute('select dts, name from raw_log as r join coffees as c on c.id=r.coffee order by dts desc')
+    rows = 0
+    ret_a = []
+    for row in data:
+        if rows >= count:
+            break
+
+        ret_a.append("%s %s" % (row['dts'], row['name']))
+        rows += 1
+    return ret_a
+
+@app.route('/last/<count:int>')
+def last(count, db):
+    count = int(count)
+    ret_a = gen_last(count, db)
+
+    if len(ret_a) > 0:
+        return json_return(200, ret_a)
+
+    return json_return(404, "No rows")
+
 @app.route('/last')
 def last(db):
-    row = db.execute('select dts, name from raw_log as r join coffees as c on c.id=r.coffee order by dts desc').fetchone()
-    if row:
-        return json_return(200, "%s %s" % (row['dts'], row['name']))
+    ret_a = gen_last(1, db)
+    if len(ret_a) > 0:
+        return json_return(200, ret_a[0])
 
     return json_return(404, "No rows")
 
@@ -32,7 +54,7 @@ def estimate_complete(dts):
     td = datetime.timedelta(seconds=BREW_TIME)
     return dts+td
 
-@app.route('/brew/:coffee_type')
+@app.route('/brew/<coffee_type:int>')
 def brew(coffee_type, db):
     if bottle.request.headers.environ.get('REMOTE_ADDR') != '127.0.0.1':
         return json_return(403, "Can only start a brew from the monitor host - sorry.")
@@ -40,7 +62,7 @@ def brew(coffee_type, db):
     data = db.execute('select id, name from coffees')
     coffees = { row['id'] : row['name'] for row in data }
 
-    if int(coffee_type) not in coffees.keys():
+    if coffee_type not in coffees.keys():
         return json_return(403, "Invalid coffee type.")
 
     row = db.execute('select dts, coffee from raw_log order by dts desc').fetchone()
@@ -51,21 +73,21 @@ def brew(coffee_type, db):
         delta = now-dt
 
         if delta.seconds < BREW_TIME:
-            if coffee_type != str(row['coffee']):
-                db.execute('update raw_log set coffee=%s where dts="%s"' % (coffee_type, row['dts']))
+            if coffee_type != row['coffee']:
+                db.execute('update raw_log set coffee=%d where dts="%s"' % (coffee_type, row['dts']))
                 return json_return(200, "brew type changed. Estimated completion: %s" % estimate_complete(dt))
             else:
                 return json_return(200, "brew already in progress. Estimated completion: %s" % estimate_complete(dt))
 
-    db.execute('insert into raw_log (coffee) values (?)', coffee_type)
+    db.execute('insert into raw_log (coffee) values (%d)' % coffee_type)
     eta = estimate_complete(now)
-    ret_str = "Brew started: %s. Estimated completion: %s" % (coffees[int(coffee_type)], eta)
+    ret_str = "Brew started: %s. Estimated completion: %s" % (coffees[coffee_type], eta)
 
     tweet(ret_str)
-    publish(str({'human': ret_str, 'type': 'start', 'coffee': coffees[int(coffee_type)], 'start': now, 'estimate': eta}))
+    publish(str({'human': ret_str, 'type': 'start', 'coffee': coffees[coffee_type], 'start': now, 'estimate': eta}))
 
     os.system("(%s/followup.sh %d %s)&" %
-              (os.path.dirname(__file__), BREW_TIME, coffees[int(coffee_type)]))
+              (os.path.dirname(__file__), BREW_TIME, coffees[coffee_type]))
 
     return json_return(200, ret_str)
 
