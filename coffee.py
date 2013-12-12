@@ -6,6 +6,7 @@ import datetime
 import os
 from utils import tweet, publish
 from settings import *
+import json
 
 app = bottle.Bottle()
 plugin = sqlite.Plugin(dbfile=os.path.join(os.path.dirname(__file__),'coffee.db'))
@@ -84,7 +85,8 @@ def brew(coffee_type, db):
     ret_str = "Brew started: %s. Estimated completion: %s" % (coffees[coffee_type], eta)
 
     tweet(ret_str)
-    publish(str({'human': ret_str, 'type': 'start', 'coffee': coffees[coffee_type], 'start': now, 'estimate': eta}))
+    publish(json.dumps({'human': ret_str, 'type': 'start', 'coffee': coffees[coffee_type],
+        'start': now.strftime("%Y%m%d%H%M%S"), 'estimate': eta.strftime("%Y%m%d%H%M%S")}))
 
     os.system("(%s/followup.sh %d %s)&" %
               (os.path.dirname(__file__), BREW_TIME, coffees[coffee_type]))

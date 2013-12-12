@@ -3,6 +3,7 @@
 from utils import tweet, publish
 from datetime import datetime
 from time import sleep
+import json
 import sys
 
 try:
@@ -16,5 +17,5 @@ except:
 msg = 'A pot of %s is ready for you.' % coffee
 sleep(delay)
 tweet(msg)
-publish(str({'type': 'complete', 'coffee': coffee, 'end': datetime.now(), 'human': msg}))
+publish(json.dumps(({'type': 'complete', 'coffee': coffee, 'end': datetime.now().strftime("%Y%m%d%H%M%S"), 'human': msg})))
 
