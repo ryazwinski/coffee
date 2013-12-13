@@ -14,7 +14,7 @@ except:
     print 'usage: %s delay coffee' % cmd
     sys.exit(1)
 
-msg = 'A pot of %s is ready for you. [%s]' % (coffee, datetime.now().strftime("%Y%m%d%H%M%S"))
+msg = 'A pot of %s is ready for you. [%s]' % (coffee, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 sleep(delay)
 tweet(msg)
 publish(json.dumps(({'type': 'complete', 'coffee': coffee, 'end': datetime.now().strftime("%Y%m%d%H%M%S"), 'human': msg})))
