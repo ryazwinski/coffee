@@ -64,6 +64,13 @@
           async: false
           }).responseText;
         var newData = eval(JSON.parse(jsonData));
+        for (var i = 1; i < newData.length; i++) {
+            for (var j = 1; j< newData.length; j++) {
+                if (newData[i][j] == 0) {
+                    newData[i][j] = null;
+                }
+            }
+        }
         var data = google.visualization.arrayToDataTable(newData);
         var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
         chart.draw(data, options);
