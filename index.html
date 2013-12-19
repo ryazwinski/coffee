@@ -56,7 +56,7 @@
         var options = {
           title: 'Coffee by Brew Time',
           hAxis: {title: 'Time' },
-          vAxis: {title: 'Count'}
+          vAxis: {title: 'Count', minValue: 0}
         };
         var jsonData = $.ajax({
           url: "scatter",
