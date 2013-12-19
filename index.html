@@ -83,8 +83,7 @@
         var newData = eval(JSON.parse(jsonData));
         var data = google.visualization.arrayToDataTable(newData);
         var options = {
-          title: 'Average by Day of Week',
-          legend: {position:'none'}
+          title: 'Average by Day of Week'
         };
         var chart = new google.visualization.BarChart(document.getElementById('average'));
         chart.draw(data, options);

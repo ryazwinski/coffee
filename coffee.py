@@ -165,24 +165,33 @@ def dow(db):
                             )
             )
         group by day_of_week;'''
-    );
+    )
     count_of_weekdays_logged = { int(row['day_of_week']): int(row['count(day_of_week)']) for row in data }
 
     data = db.execute('''
         select day_of_week, count(day_of_week) from (
             select strftime("%w", dts) as day_of_week from raw_log
         ) group by day_of_week;'''
-    );
+    )
     raw_brews_by_weekday = { int(row['day_of_week']): int(row['count(day_of_week)']) for row in data }
 
     average_brews_by_weekday = [ 0 for x in range(7) ]
     for day in raw_brews_by_weekday.keys():
         average_brews_by_weekday[day] = raw_brews_by_weekday[day]/count_of_weekdays_logged[day]
 
+    data = db.execute('''
+        select strftime("%w", dts), count(dts) from raw_log where date(dts) > DATE("now", "-7 days")
+            group by date(dts);''')
+
+    last_seven_days = [ 0 for x in range(7) ]
+    for row in data:
+        last_seven_days[int(row['strftime("%w", dts)'])] = int(row['count(dts)'])
+            
+
     days = ['Sun','Mon','Tues','Wed','Thurs','Fri','Sat']
-    return_array = [['Day', 'Count']]
+    return_array = [['Day', 'Average', 'Last 7 Days']]
     for day in range(7):
-        return_array.append([days[day], average_brews_by_weekday[day]])
+        return_array.append([days[day], average_brews_by_weekday[day], last_seven_days[day]])
 
     return json_return(200, str(return_array))
 
